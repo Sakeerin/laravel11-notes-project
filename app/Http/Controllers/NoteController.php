@@ -30,7 +30,15 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'note' => ['required', 'string']
+        ]);
+
+        // $data['user_id'] = $request->user()->id;
+        $data['user_id'] = 1;
+        $note = Note::create($data);
+
+        return to_route('note.show', $note)->with('message', 'Note was create');
     }
 
     /**
@@ -54,14 +62,29 @@ class NoteController extends Controller
      */
     public function update(Request $request, Note $note)
     {
-        //
+        // if ($note->user_id !== request()->user()->id) {
+        //     abort(403);
+        // }
+        $data = $request->validate([
+            'note' => ['required', 'string']
+        ]);
+
+        $note->update($data);
+
+        return to_route('note.show', $note)->with('message', 'Note was updated');
     }
+    
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Note $note)
     {
-        //
+        // if ($note->user_id !== request()->user()->id) {
+        //     abort(403);
+        // }
+        $note->delete();
+
+        return to_route('note.index')->with('message', 'Note was deleted');
     }
 }
